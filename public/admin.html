@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard | Manage Games & Lockers</title>
+  <title>Admin Dashboard | MOBILEGAMES4U</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -14,22 +14,123 @@
       padding: 24px 16px;
       line-height: 1.5;
     }
-    .container { max-width: 1200px; margin: 0 auto; }
+    .container { max-width: 1200px; margin: 0 auto; display: none; }
+    
+    /* Login / Setup Lock Screen */
+    .lock-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 85vh;
+      padding: 16px;
+    }
+    .lock-card {
+      background: #FFFFFF;
+      border: 1px solid #D72323;
+      border-radius: 16px;
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+    .lock-icon {
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 16px;
+      background: #FEF2F2;
+      border: 1px solid #FEE2E2;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #D72323;
+    }
+    .lock-title { font-size: 20px; font-weight: 800; color: #111827; margin-bottom: 6px; }
+    .lock-desc { font-size: 13px; color: #6B7280; margin-bottom: 20px; line-height: 1.4; }
+    
+    .field-group { text-align: left; margin-bottom: 14px; }
+    .field-label { display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 5px; }
+    .lock-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .lock-input:focus { border-color: #D72323; }
+    
+    .lock-btn {
+      width: 100%;
+      padding: 12px;
+      background: #D72323;
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.15s ease;
+    }
+    .lock-btn:hover { background: #B91C1C; }
+    
+    .lock-error {
+      display: none;
+      margin-top: 12px;
+      padding: 8px 12px;
+      background: #FEF2F2;
+      border: 1px solid #FEE2E2;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #DC2626;
+      font-weight: 600;
+    }
+    .lock-toggle {
+      margin-top: 16px;
+      font-size: 12px;
+      color: #D72323;
+      cursor: pointer;
+      text-decoration: underline;
+      display: inline-block;
+    }
+
+    /* Dashboard Header */
     header {
       display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
       justify-content: space-between;
       align-items: center;
       background: #FFFFFF;
       padding: 16px 24px;
       border-radius: 14px;
       border: 1px solid #E5E7EB;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
     .brand { display: flex; align-items: center; gap: 12px; }
     .brand-title { font-size: 18px; font-weight: 900; }
     .brand-title span { color: #D72323; }
     .brand-subtitle { font-size: 11px; color: #6B7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    
+    .live-sync-banner {
+      background: #ECFDF5;
+      border: 1px solid #A7F3D0;
+      border-radius: 10px;
+      padding: 12px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .live-sync-text { font-size: 13px; color: #065F46; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .live-dot { width: 9px; height: 9px; border-radius: 50%; background: #10B981; display: inline-block; }
+
     .btn {
       display: inline-flex;
       align-items: center;
@@ -51,13 +152,13 @@
     .btn-success:hover { background: #047857; }
     .btn-danger { background: #EF4444; color: #FFFFFF; }
     .btn-danger:hover { background: #DC2626; }
-    .btn-sm { padding: 4px 8px; font-size: 11px; }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
 
     .stats-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 16px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     .stat-card {
       background: #FFFFFF;
@@ -85,7 +186,6 @@
       flex: 1;
       min-width: 260px;
       max-width: 400px;
-      position: relative;
     }
     .search-input {
       width: 100%;
@@ -102,10 +202,10 @@
       background: #FFFFFF;
       border-radius: 14px;
       border: 1px solid #E5E7EB;
-      overflow: hidden;
+      overflow-x: auto;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
-    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; min-width: 800px; }
     th {
       background: #F9FAFB;
       padding: 12px 16px;
@@ -123,7 +223,7 @@
     .game-cell { display: flex; align-items: center; gap: 12px; }
     .game-icon { width: 38px; height: 38px; border-radius: 8px; object-fit: cover; border: 1px solid #E5E7EB; background: #F3F4F6; }
     .game-name { font-weight: 700; color: #111827; }
-    .game-slug { font-size: 11px; color: #9CA3AF; font-mono; }
+    .game-slug { font-size: 11px; color: #9CA3AF; }
 
     .badge {
       display: inline-block;
@@ -148,7 +248,7 @@
     }
     .locker-input:focus { border-color: #D72323; outline: none; }
 
-    /* Modal */
+    /* Modals */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -205,11 +305,76 @@
   </style>
 </head>
 <body>
-  <div class="container">
+
+  <!-- 1. Password & Username Authentication Gate -->
+  <div id="lock-screen" class="lock-screen">
+    <div class="lock-card">
+      <div class="lock-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+
+      <!-- State A: Login Form -->
+      <div id="login-form-container">
+        <div class="lock-title">Admin Sign In</div>
+        <div class="lock-desc">Enter the administrator username and your chosen password to access the game & locker manager.</div>
+        
+        <form onsubmit="handleLogin(event)">
+          <div class="field-group">
+            <label class="field-label">Username</label>
+            <input type="text" id="admin-user-input" class="lock-input" value="mobilgamesadmin" placeholder="mobilgamesadmin" required>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Password</label>
+            <input type="password" id="admin-pass-input" class="lock-input" placeholder="Enter your password" required>
+          </div>
+          <button type="submit" class="lock-btn">Sign In to Dashboard</button>
+        </form>
+
+        <div id="lock-error" class="lock-error">Invalid username or password.</div>
+
+        <div style="margin-top: 16px;">
+          <span class="lock-toggle" onclick="switchToSetupView()">First time or forgot password? Set/Change Password</span>
+        </div>
+      </div>
+
+      <!-- State B: Choose / Set Password Form -->
+      <div id="setup-form-container" style="display: none;">
+        <div class="lock-title">Choose Admin Password</div>
+        <div class="lock-desc">Choose a personal password for <strong>mobilgamesadmin</strong>.</div>
+        
+        <form onsubmit="handleInitialSetup(event)">
+          <div class="field-group">
+            <label class="field-label">Admin Username</label>
+            <input type="text" id="setup-user-input" class="lock-input" value="mobilgamesadmin" readonly style="background:#F9FAFB;">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Choose Your New Password</label>
+            <input type="password" id="setup-pass-input" class="lock-input" minlength="4" placeholder="Enter password (e.g. MyPassword123)" required>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Confirm Password</label>
+            <input type="password" id="setup-confirm-input" class="lock-input" minlength="4" placeholder="Re-enter password" required>
+          </div>
+          <button type="submit" class="lock-btn">Save Password & Enter Dashboard</button>
+        </form>
+
+        <div id="setup-error" class="lock-error"></div>
+
+        <div style="margin-top: 16px;">
+          <span class="lock-toggle" onclick="switchToLoginView()">← Back to Sign In</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Protected Admin Dashboard (Only visible when authenticated) -->
+  <div id="admin-container" class="container">
     <!-- Header -->
     <header>
       <div class="brand">
-        <!-- Exact 36px Device Logo SVG -->
         <svg width="36" height="36" viewBox="0 0 200 200" fill="none">
           <rect x="18" y="18" width="164" height="164" rx="46" fill="#111622" />
           <circle cx="100" cy="32" r="4.5" fill="#FFFFFF" />
@@ -220,18 +385,42 @@
         </svg>
         <div>
           <div class="brand-title">MOBILEGAMES<span>4U</span> Admin</div>
-          <div class="brand-subtitle">Catalog & Locker Inventory</div>
+          <div class="brand-subtitle">Logged in as: <strong style="color:#111827;">mobilgamesadmin</strong></div>
         </div>
       </div>
-      <div>
-        <a href="/" class="btn btn-secondary">← Back to Website</a>
+      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        <button onclick="openChangePasswordModal()" class="btn btn-secondary btn-sm" title="Change Admin Password">
+          🔑 Change Password
+        </button>
+        <button onclick="handleLogout()" class="btn btn-secondary btn-sm" style="color: #DC2626;">
+          🔒 Lock / Logout
+        </button>
+        <a href="/" target="_blank" class="btn btn-primary btn-sm">
+          👁️ View Live Website →
+        </a>
       </div>
     </header>
+
+    <!-- Live Sync Alert -->
+    <div class="live-sync-banner">
+      <div class="live-sync-text">
+        <span class="live-dot"></span>
+        <span><strong>Live Sync Active:</strong> All changes made here (add, delete, edit) apply <u>instantly</u> to the live website on this device!</span>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button onclick="downloadUpdatedJson()" class="btn btn-success btn-sm">
+          📥 Export games.json (for GitHub)
+        </button>
+        <button onclick="resetToDefaults()" class="btn btn-secondary btn-sm" style="color:#6B7280;" title="Restore original games catalog">
+          ↺ Reset Catalog
+        </button>
+      </div>
+    </div>
 
     <!-- Stats -->
     <div class="stats-row">
       <div class="stat-card">
-        <div class="stat-label">Total Games</div>
+        <div class="stat-label">Total Active Games</div>
         <div class="stat-val" id="stat-total">0</div>
       </div>
       <div class="stat-card">
@@ -252,9 +441,8 @@
       <div class="actions-group">
         <button class="btn btn-primary" onclick="openAddModal()">+ Add New Game</button>
         <button class="btn btn-secondary" onclick="copyJsonToClipboard()">Copy JSON</button>
-        <button class="btn btn-success" onclick="downloadUpdatedJson()">Export games.json</button>
         <label class="btn btn-secondary" style="cursor: pointer;">
-          Load JSON
+          Load JSON File
           <input type="file" id="file-loader" accept=".json" style="display: none;" onchange="loadJsonFile(event)">
         </label>
       </div>
@@ -282,7 +470,7 @@
     </div>
   </div>
 
-  <!-- Add/Edit Modal -->
+  <!-- Add/Edit Game Modal -->
   <div id="game-modal" class="modal-overlay">
     <div class="modal">
       <div class="modal-header">
@@ -334,7 +522,31 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Game</button>
+          <button type="submit" class="btn btn-primary">Save Game & Apply Live</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div id="password-modal" class="modal-overlay">
+    <div class="modal" style="max-width: 420px;">
+      <div class="modal-header">
+        <div class="modal-title">Change Password for mobilgamesadmin</div>
+        <button onclick="closePasswordModal()" style="border:none; background:none; font-size:20px; cursor:pointer;">&times;</button>
+      </div>
+      <form onsubmit="handleUpdatePassword(event)">
+        <div class="form-group">
+          <label class="form-label">New Password</label>
+          <input type="password" id="new-password-input" class="form-input" required minlength="4" placeholder="Enter new password">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm New Password</label>
+          <input type="password" id="confirm-password-input" class="form-input" required minlength="4" placeholder="Confirm new password">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closePasswordModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Password</button>
         </div>
       </form>
     </div>
@@ -343,24 +555,188 @@
   <div id="toast" class="toast">Action completed successfully</div>
 
   <script>
+    // SHA-256 hash helper using browser Web Crypto API
+    async function sha256(str) {
+      const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+      return Array.prototype.map.call(new Uint8Array(buf), x => (('00' + x.toString(16)).slice(-2))).join('');
+    }
+
+    const REQUIRED_USER = "mobilgamesadmin";
+
+    function normalizeUser(u) {
+      return (u || '').trim().toLowerCase();
+    }
+
+    function isUsernameValid(u) {
+      const norm = normalizeUser(u);
+      return norm === 'mobilgamesadmin' || norm === 'mobilegamesadmin';
+    }
+
+    function switchToSetupView() {
+      document.getElementById('login-form-container').style.display = 'none';
+      document.getElementById('setup-form-container').style.display = 'block';
+      document.getElementById('setup-error').style.display = 'none';
+      document.getElementById('setup-pass-input').value = '';
+      document.getElementById('setup-confirm-input').value = '';
+    }
+
+    function switchToLoginView() {
+      document.getElementById('setup-form-container').style.display = 'none';
+      document.getElementById('login-form-container').style.display = 'block';
+      document.getElementById('lock-error').style.display = 'none';
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('admin-user-input').value;
+      const pass = document.getElementById('admin-pass-input').value;
+      const errorDiv = document.getElementById('lock-error');
+
+      if (!isUsernameValid(user)) {
+        errorDiv.innerText = "Username must be mobilgamesadmin";
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      const storedHash = localStorage.getItem('mg4u_admin_hash');
+      
+      // If user hasn't chosen a password yet, take them to choose password
+      if (!storedHash) {
+        switchToSetupView();
+        document.getElementById('setup-error').innerText = "Please choose your initial password below:";
+        document.getElementById('setup-error').style.display = 'block';
+        return;
+      }
+
+      const inputHash = await sha256(pass);
+      if (inputHash === storedHash) {
+        sessionStorage.setItem('mg4u_auth_session', 'true');
+        document.getElementById('lock-screen').style.display = 'none';
+        document.getElementById('admin-container').style.display = 'block';
+        errorDiv.style.display = 'none';
+        initGames();
+        showToast('Welcome, mobilgamesadmin! Dashboard unlocked.');
+      } else {
+        errorDiv.innerText = "Incorrect password for mobilgamesadmin. Click 'Set/Change Password' if needed.";
+        errorDiv.style.display = 'block';
+      }
+    }
+
+    async function handleInitialSetup(e) {
+      e.preventDefault();
+      const pass = document.getElementById('setup-pass-input').value;
+      const confirm = document.getElementById('setup-confirm-input').value;
+      const err = document.getElementById('setup-error');
+
+      if (pass !== confirm) {
+        err.innerText = "Passwords do not match!";
+        err.style.display = 'block';
+        return;
+      }
+      if (pass.length < 4) {
+        err.innerText = "Password must be at least 4 characters long!";
+        err.style.display = 'block';
+        return;
+      }
+
+      const hash = await sha256(pass);
+      localStorage.setItem('mg4u_admin_hash', hash);
+      sessionStorage.setItem('mg4u_auth_session', 'true');
+
+      document.getElementById('lock-screen').style.display = 'none';
+      document.getElementById('admin-container').style.display = 'block';
+      initGames();
+      showToast('Password created successfully! Dashboard unlocked.');
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem('mg4u_auth_session');
+      document.getElementById('admin-container').style.display = 'none';
+      document.getElementById('lock-screen').style.display = 'flex';
+      switchToLoginView();
+      document.getElementById('admin-pass-input').value = '';
+      showToast('Logged out securely');
+    }
+
+    function openChangePasswordModal() {
+      document.getElementById('new-password-input').value = '';
+      document.getElementById('confirm-password-input').value = '';
+      document.getElementById('password-modal').classList.add('active');
+    }
+
+    function closePasswordModal() {
+      document.getElementById('password-modal').classList.remove('active');
+    }
+
+    async function handleUpdatePassword(e) {
+      e.preventDefault();
+      const newPass = document.getElementById('new-password-input').value;
+      const confirmPass = document.getElementById('confirm-password-input').value;
+
+      if (newPass !== confirmPass) {
+        alert('Passwords do not match!');
+        return;
+      }
+      if (newPass.length < 4) {
+        alert('Password must be at least 4 characters long!');
+        return;
+      }
+
+      const newHash = await sha256(newPass);
+      localStorage.setItem('mg4u_admin_hash', newHash);
+      closePasswordModal();
+      showToast('Password for mobilgamesadmin updated successfully!');
+    }
+
+    // Verify session on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const isAuthed = sessionStorage.getItem('mg4u_auth_session') === 'true';
+      const storedHash = localStorage.getItem('mg4u_admin_hash');
+
+      if (isAuthed) {
+        document.getElementById('lock-screen').style.display = 'none';
+        document.getElementById('admin-container').style.display = 'block';
+        initGames();
+      } else {
+        document.getElementById('lock-screen').style.display = 'flex';
+        document.getElementById('admin-container').style.display = 'none';
+        if (!storedHash) {
+          switchToSetupView();
+        } else {
+          switchToLoginView();
+        }
+      }
+    });
+
     let games = [];
 
-    // Load initial games from games.json
-    async function init() {
+    // Load initial games
+    async function initGames() {
       try {
-        const stored = localStorage.getItem('admin_games_cache');
+        const stored = localStorage.getItem('mg4u_custom_games') || localStorage.getItem('admin_games_cache');
         if (stored) {
           games = JSON.parse(stored);
         } else {
-          const res = await fetch('/games.json');
+          const res = await fetch('/games.json?t=' + Date.now());
           if (res.ok) {
             games = await res.json();
+            persistLive();
           }
         }
       } catch (e) {
-        console.warn('Failed to load /games.json, initializing empty array');
+        console.warn('Failed to load /games.json');
       }
       render();
+    }
+
+    // CRITICAL: Persist to both storage keys and broadcast event so the website updates instantly
+    function persistLive() {
+      const dataStr = JSON.stringify(games);
+      localStorage.setItem('mg4u_custom_games', dataStr);
+      localStorage.setItem('admin_games_cache', dataStr);
+      try {
+        window.dispatchEvent(new Event('mg4u_games_updated'));
+      } catch (e) {}
     }
 
     function render(filtered = null) {
@@ -372,7 +748,7 @@
       document.getElementById('stat-hot').innerText = games.filter(g => g.isHot).length;
       document.getElementById('stat-lockers').innerText = games.filter(g => g.contentLockerLink && g.contentLockerLink.trim().length > 0).length;
 
-      list.forEach((game, index) => {
+      list.forEach((game) => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>
@@ -385,7 +761,7 @@
             </div>
           </td>
           <td><span class="badge badge-gray">${game.category || 'Game'}</span></td>
-          <td><span class="badge badge-gray font-mono">${game.version || 'v1.0'}</span></td>
+          <td><span class="badge badge-gray" style="font-family: monospace;">${game.version || 'v1.0'}</span></td>
           <td><span style="font-size:12px; color:#4B5563;">${game.fileSize || '100 MB'}</span></td>
           <td><strong>★ ${game.rating || 4.8}</strong></td>
           <td>
@@ -407,8 +783,8 @@
       const game = games.find(g => g.id === id);
       if (game) {
         game.contentLockerLink = value.trim();
-        saveCache();
-        showToast('Locker link updated');
+        persistLive();
+        showToast('Locker updated & applied live to website!');
       }
     }
 
@@ -510,23 +886,33 @@
         games.unshift(newGame);
       }
 
-      saveCache();
+      persistLive();
       closeModal();
       render();
-      showToast('Game saved successfully');
+      showToast('Game saved & applied live to website!');
     }
 
     function deleteGame(id) {
-      if (confirm('Are you sure you want to remove this game?')) {
+      if (confirm('Delete this game from your catalog and website?')) {
         games = games.filter(g => g.id !== id);
-        saveCache();
+        persistLive();
         render();
-        showToast('Game removed');
+        showToast('Game deleted & updated on website!');
       }
     }
 
-    function saveCache() {
-      localStorage.setItem('admin_games_cache', JSON.stringify(games));
+    async function resetToDefaults() {
+      if (confirm('Reset catalog back to the original default games list?')) {
+        try {
+          const res = await fetch('/games.json?t=' + Date.now());
+          if (res.ok) {
+            games = await res.json();
+          }
+        } catch (e) {}
+        persistLive();
+        render();
+        showToast('Catalog reset to defaults & live on website');
+      }
     }
 
     function downloadUpdatedJson() {
@@ -537,7 +923,7 @@
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
-      showToast('games.json downloaded!');
+      showToast('games.json downloaded! Replace data/games.json to update permanently on GitHub.');
     }
 
     function copyJsonToClipboard() {
@@ -555,9 +941,9 @@
           const parsed = JSON.parse(event.target.result);
           if (Array.isArray(parsed)) {
             games = parsed;
-            saveCache();
+            persistLive();
             render();
-            showToast(`Loaded ${games.length} games from file`);
+            showToast(`Loaded ${games.length} games & applied live to website!`);
           }
         } catch (err) {
           alert('Invalid JSON file format');
@@ -572,8 +958,6 @@
       t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 2500);
     }
-
-    window.onload = init;
   </script>
 </body>
 </html>
