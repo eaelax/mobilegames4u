@@ -5,11 +5,33 @@ import { GAMES_DATA } from '@/lib/games-data';
 import { Download } from 'lucide-react';
 
 export function RecentDownloadsTicker() {
+  const [games, setGames] = useState<any[]>(GAMES_DATA);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [animationState, setAnimationState] = useState<'entering' | 'visible' | 'exiting'>('entering');
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const sync = () => {
+      try {
+        const saved = localStorage.getItem('mg4u_custom_games') || localStorage.getItem('admin_games_cache');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setGames(parsed);
+          }
+        }
+      } catch (err) {}
+    };
+    sync();
+    window.addEventListener('storage', sync);
+    window.addEventListener('mg4u_games_updated', sync);
+    return () => {
+      window.removeEventListener('storage', sync);
+      window.removeEventListener('mg4u_games_updated', sync);
+    };
+  }, []);
 
   useEffect(() => {
     // Initial entrance
@@ -22,7 +44,7 @@ export function RecentDownloadsTicker() {
       setAnimationState('exiting');
 
       timeoutRef.current = setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % GAMES_DATA.length);
+        setCurrentIndex((prev) => (prev + 1) % (games.length || 1));
         setAnimationState('entering');
 
         setTimeout(() => {
@@ -36,9 +58,9 @@ export function RecentDownloadsTicker() {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, []);
+  }, [games.length]);
 
-  const game = GAMES_DATA[currentIndex % GAMES_DATA.length];
+  const game = games[currentIndex % (games.length || 1)];
 
   if (!game) return null;
 
