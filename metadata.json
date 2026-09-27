@@ -1,0 +1,6 @@
+{
+  "name": "mobilegames4u",
+  "description": "High-converting modded mobile games landing page with pSEO, dynamic sitemap, and OgAds CPA content locker redirects.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
