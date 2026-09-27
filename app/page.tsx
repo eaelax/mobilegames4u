@@ -21,21 +21,85 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGameForModal, setSelectedGameForModal] = useState<GameItem | null>(null);
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [gamesList, setGamesList] = useState<GameItem[]>(GAMES_DATA);
+
+  // Sync games list from localStorage (admin edits) and /games.json
+  React.useEffect(() => {
+    const syncGames = () => {
+      try {
+        const saved = localStorage.getItem('mg4u_custom_games') || localStorage.getItem('admin_games_cache');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            const formatted = parsed.map((game: any) => ({
+              ...game,
+              name: game.name || game.title,
+              title: game.name || game.title,
+              iconUrl: game.imageLink || game.iconUrl,
+              imageLink: game.imageLink || game.iconUrl,
+              contentLockerLink: game.contentLockerLink || '',
+              modFeatures: Array.isArray(game.modFeatures) ? game.modFeatures : [],
+            }));
+            setGamesList(formatted);
+            return;
+          }
+        }
+
+        // Check if /games.json has updated items
+        fetch('/games.json?t=' + Date.now())
+          .then((res) => res.json())
+          .then((data) => {
+            if (Array.isArray(data) && data.length > 0) {
+              const formatted = data.map((game: any) => ({
+                ...game,
+                name: game.name || game.title,
+                title: game.name || game.title,
+                iconUrl: game.imageLink || game.iconUrl,
+                imageLink: game.imageLink || game.iconUrl,
+                contentLockerLink: game.contentLockerLink || '',
+                modFeatures: Array.isArray(game.modFeatures) ? game.modFeatures : [],
+              }));
+              setGamesList(formatted);
+            }
+          })
+          .catch(() => {});
+      } catch (err) {
+        console.error('Failed to sync games', err);
+      }
+    };
+
+    syncGames();
+
+    // Listen to changes made in admin tab or across tabs
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === 'mg4u_custom_games' || e.key === 'admin_games_cache') {
+        syncGames();
+      }
+    };
+
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('mg4u_games_updated', syncGames);
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('mg4u_games_updated', syncGames);
+    };
+  }, []);
 
   // Filter games based purely on title search
   const filteredGames = useMemo(() => {
     const cleanQuery = searchQuery.trim().toLowerCase();
-    if (!cleanQuery) return GAMES_DATA;
+    if (!cleanQuery) return gamesList;
 
-    return GAMES_DATA.filter((game) => {
-      const titleLower = game.title.toLowerCase();
+    return gamesList.filter((game) => {
+      const titleLower = (game.title || game.name || '').toLowerCase();
       const queryWords = cleanQuery.split(/\s+/).filter(Boolean);
       return (
         titleLower.includes(cleanQuery) ||
         queryWords.every((word) => titleLower.includes(word))
       );
     });
-  }, [searchQuery]);
+  }, [searchQuery, gamesList]);
 
   return (
     <div className="min-h-screen bg-[#ECEEF2] text-[#111827] flex flex-col selection:bg-[#D72323]/20 selection:text-[#111827]">
