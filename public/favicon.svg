@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Outer Dark Frame (Navy / Charcoal) -->
+  <rect x="18" y="18" width="164" height="164" rx="46" fill="#111622" />
+  
+  <!-- Top Camera Dot (White) -->
+  <circle cx="100" cy="32" r="4.5" fill="#FFFFFF" />
+  
+  <!-- Bottom Bar (White) -->
+  <rect x="85" y="163" width="30" height="4.5" rx="2.25" fill="#FFFFFF" />
+  
+  <!-- Inner Screen (White) -->
+  <rect x="42" y="42" width="116" height="116" rx="30" fill="#FFFFFF" />
+  
+  <!-- Download Arrow (Crimson Red) -->
+  <path
+    d="M89 62 H111 V98 H133 L100 134 L67 98 H89 Z"
+    fill="#D72323"
+  />
+  
+  <!-- Bottom Tray Line (Crimson Red) -->
+  <rect x="72" y="142" width="56" height="7.5" rx="3.75" fill="#D72323" />
+</svg>
